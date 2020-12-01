@@ -14,9 +14,9 @@ class ThinkSmsClient
         new self();
     }
 
-    public static function send_sms($accessSecret, $accessKey, $signName, $template=NULL){
+    public static function send_sms($phone,$smsParam,$template=NULL){
         self::init();
-        return self::$sms->send_sms($accessSecret, $accessKey, $signName, $template);
+        return self::$sms->send_sms($phone,$smsParam,$template);
     }
 
 }
