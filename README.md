@@ -7,7 +7,7 @@
 
 ```php 
 use Hahadu\Sms\Client\SmsClient;
-$sms = New SmsClient('access_secret','access_key','阿里云');
+$sms = New SmsClient('access_secret','access_key','测试签名');
 return $sms->send_sms('18888888888',['code'=>4545],'SMS_205*******'); //array
 ```
 
