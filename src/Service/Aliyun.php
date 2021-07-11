@@ -3,15 +3,19 @@
 
 namespace Hahadu\Sms\Service;
 
-use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\Client\Exception\ClientException;
-use AlibabaCloud\Client\Exception\ServerException;
 use Hahadu\Helper\JsonHelper;
 use Hahadu\Sms\Client\SmsServiceInterface;
+use Hahadu\Sms\Service\Aliyun\AliyunSmsRequest;
+use Hahadu\Sms\Service\Aliyun\AliyunSmsSign;
+use Hahadu\Sms\Service\Aliyun\AliyunSmsTemplate;
 
 
 class Aliyun implements SmsServiceInterface
 {
+    use AliyunSmsSign;
+    use AliyunSmsRequest;
+    use AliyunSmsTemplate;
     /*****
      * @var $access_key string
      */
@@ -30,60 +34,70 @@ class Aliyun implements SmsServiceInterface
      * @var $sms_template object json
      */
     protected $sms_template;
+
     /*****
      * 构造函数
      * @param string $accessSecret Secret key
      * @param string $accessKey Secret key id
-     * @param string $signName  短信签名
-     * @param string $template 短信模板
+     * @param string $signName 短信签名
      */
-    public function __construct($accessSecret, $accessKey, $signName, $template=NULL)
+    public function __construct(string $accessSecret, string $accessKey, string $signName)
     {
         $this->access_key = $accessKey;
         $this->access_secret = $accessSecret;
         $this->sign_name = $signName;
+    }
+
+    /******
+     * 设置默认短信模板
+     * @param null $template 短信模板
+     */
+    public function set_template($template = NULL)
+    {
         $this->sms_template = $template;
     }
 
     /*****
      * 发送短信方法
-     * @param int|string $phone
+     * @param int|string $phone 接收方手机号
      * @param array $smsParam 短信内容
      * @param string $template 短信模板
      * @throws ClientException
      */
-    public function send_sms($phone,$smsParam,$template=NULL){
-        if(null!==$template)$this->sms_template = $template;
+    public function send_sms($phone, $smsParam, $template = NULL)
+    {
+        if (null !== $template) $this->sms_template = $template;
 
-        AlibabaCloud::accessKeyClient($this->access_key, $this->access_secret)
-            ->regionId('cn-hangzhou')
-            ->asDefaultClient();
-
-        try {
-            $result = AlibabaCloud::rpc()
-                ->product('Dysmsapi')
-                // ->scheme('https') // https | http
-                ->version('2017-05-25')
-                ->action('SendSms')
-                ->method('POST')
-                ->host('dysmsapi.aliyuncs.com')
-                ->options([
-                    'query' => [
-                        'RegionId' => "cn-hangzhou",
-                        'PhoneNumbers' => $phone,
-                        'SignName'     => $this->sign_name,
-                        'TemplateCode' => $this->sms_template,
-                        'TemplateParam' => JsonHelper::json_encode($smsParam),
-                    ],
-                ])
-                ->request();
-            return ($result->toArray());
-        } catch (ClientException $e) {
-            return $e->getErrorMessage() . PHP_EOL;
-        } catch (ServerException $e) {
-            return $e->getErrorMessage() . PHP_EOL;
-        }
+        $options = [
+            'PhoneNumbers' => $phone,
+            'SignName' => $this->sign_name,
+            'TemplateCode' => $this->sms_template,
+            'TemplateParam' => JsonHelper::json_encode($smsParam),
+        ];
+        return $this->request('SendSms', $options);
     }
 
+    /*****
+     * 查询发送记录
+     * @param string|int $phone_number
+     * @param int $current_page
+     * @param int $page_size
+     * @param null $send_date
+     * @return array|string
+     * @throws ClientException
+     */
+    public function query_send_details($phone_number, $current_page = 1, $page_size = 50, $send_date = null)
+    {
+        if (null == $send_date) {
+            $send_date = date("Ymd");
+        }
+        $options = [
+            'CurrentPage' => $current_page,
+            'PageSize' => $page_size,
+            'PhoneNumber' => $phone_number,
+            'SendDate' => $send_date
+        ];
+        return $this->request('QuerySendDetails', $options);
+    }
 
 }
