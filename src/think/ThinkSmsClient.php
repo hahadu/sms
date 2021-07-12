@@ -2,18 +2,24 @@
 
 
 namespace Hahadu\Sms\think;
+
 use AlibabaCloud\Client\Exception\ClientException;
 use Hahadu\Sms\Client\SmsClient;
 
 class ThinkSmsClient
 {
-    protected static $sms;
-    public function __construct(){
-        self::$sms = New SmsClient(config('sms.access_secret'),config('sms.access_key'),config('sms.sign_name'),config('sms.service'));
-        self::$sms->set_template(config('sms.template'));
+    protected $sms;
+
+    public function __construct()
+    {
+        $service_name = config('sms.default');
+        $this->sms = new SmsClient(config('sms.service.' . $service_name . '.access_secret'), config('sms.service.' . $service_name . '.access_key'), config('sms.service.' . $service_name . '.sign_name'), $service_name);
+        $this->sms->set_template(config('sms.service.' . $service_name . '.template'));
     }
-    public static function init(){
-        new self();
+
+    public static function init()
+    {
+        return new self();
     }
 
     /*****
@@ -24,14 +30,16 @@ class ThinkSmsClient
      * @throws ClientException
      */
 
-    public static function send_sms($phone,$smsParam,$template=NULL){
-        self::init();
-        return self::$sms->send_sms($phone,$smsParam,$template);
+    public function send_sms($phone, $smsParam, $template = NULL)
+    {
+
+        return $this->sms->send_sms($phone, $smsParam, $template);
     }
 
-    public static function query_send_details($phone_number, $current_page = 1, $page_size = 10, $send_date=null){
-        self::init();
-        return self::$sms->query_send_details($phone_number,$current_page,$page_size,$send_date);
+    public function query_send_details($phone_number, $current_page = 1, $page_size = 10, $send_date = null)
+    {
+
+        return $this->sms->query_send_details($phone_number, $current_page, $page_size, $send_date);
     }
 
     /******
@@ -39,9 +47,10 @@ class ThinkSmsClient
      * @param null|string $template 默认短信模板
      * @return mixed
      */
-    public static function set_template($template = NULL)
+    public function set_template($template = NULL)
     {
-        self::init();
+
+        return $this->sms->set_template($template);
     }
 
     /*****
@@ -49,10 +58,10 @@ class ThinkSmsClient
      * @param string $sign 签名标识符 <br/> 阿里云为签名名称，七牛云为签名ID
      *
      */
-    public static function query_sms_sign(string $sign)
+    public function query_sms_sign(string $sign)
     {
-        self::init();
-        return self::$sms->query_sms_sign($sign);
+
+        return $this->sms->query_sms_sign($sign);
     }
 
     /*****
@@ -61,10 +70,10 @@ class ThinkSmsClient
      * * 必须是本账号已申请的短信签名
      * @param string $sign 签名标识符
      */
-    public static function delete_sms_sign(string $sign)
+    public function delete_sms_sign(string $sign)
     {
-        self::init();
-        return self::$sms->delete_sms_sign($sign);
+
+        return $this->sms->delete_sms_sign($sign);
     }
 
     /*****
@@ -81,10 +90,10 @@ class ThinkSmsClient
      * @param string $remark 签名申请说明
      * @return array|string
      */
-    public static function create_sms_sign(string $sign_name, int $sign_source, $file_contents = null, $file_format = null, $remark = '')
+    public function create_sms_sign(string $sign_name, int $sign_source, $file_contents = null, $file_format = null, $remark = '')
     {
-        self::init();
-        return self::$sms->create_sms_sign($sign_name,$sign_source,$file_contents,$file_format,$remark);
+
+        return $this->sms->create_sms_sign($sign_name, $sign_source, $file_contents, $file_format, $remark);
     }
 
     /*****
@@ -101,10 +110,10 @@ class ThinkSmsClient
      * @param string $remark 签名申请说明
      * @return array|string
      */
-    public static function edit_sms_sign(string $sign_name, int $sign_source, $file_contents = null, $file_format = null, $remark = '')
+    public function edit_sms_sign(string $sign_name, int $sign_source, $file_contents = null, $file_format = null, $remark = '')
     {
-        self::init();
-        return self::$sms->edit_sms_sign($sign_name,$sign_source,$file_contents,$file_format,$remark);
+
+        return $this->sms->edit_sms_sign($sign_name, $sign_source, $file_contents, $file_format, $remark);
     }
 
     /*****
@@ -112,10 +121,10 @@ class ThinkSmsClient
      * @param string $template 短信模板code
      * @return array|string
      */
-    public static function query_sms_template(string $template)
+    public function query_sms_template(string $template)
     {
-        self::init();
-        return self::$sms->query_sms_template($template);
+
+        return $this->sms->query_sms_template($template);
     }
 
     /*****
@@ -132,10 +141,10 @@ class ThinkSmsClient
      * @param null $sign 模板签名ID
      * @return array|string
      */
-    public static function edit_sms_template($type, $template_name, $template_content, $remark, $template_code = null, $sign = null)
+    public function edit_sms_template($type, $template_name, $template_content, $remark, $template_code = null, $sign = null)
     {
-        self::init();
-        return self::$sms->edit_sms_template($type,$template_name,$template_content,$remark,$template_code,$sign);
+
+        return $this->sms->edit_sms_template($type, $template_name, $template_content, $remark, $template_code, $sign);
     }
 
     /*****
@@ -151,10 +160,10 @@ class ThinkSmsClient
      * @param null $sign 模板签名ID
      * @return array|string
      */
-    public static function create_sms_template($type, $template_name, $template_content, $remark, $sign = null)
+    public function create_sms_template($type, $template_name, $template_content, $remark, $sign = null)
     {
-        self::init();
-        return self::$sms->create_sms_template($type,$template_name,$template_content,$remark,$sign);
+
+        return $this->sms->create_sms_template($type, $template_name, $template_content, $remark, $sign);
     }
 
     /*****
@@ -162,9 +171,9 @@ class ThinkSmsClient
      * @param string $template_code 短信模板标识符
      * @return array|string
      */
-    public static function delete_sms_template(string $template_code)
+    public function delete_sms_template(string $template_code)
     {
-        self::init();
-        return self::$sms->delete_sms_template($template_code);
+
+        return $this->sms->delete_sms_template($template_code);
     }
 }

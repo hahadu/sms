@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Hahadu\Sms\Service\Aliyun;
+namespace Hahadu\Sms\Service\AliyunSms;
 
 
 use AlibabaCloud\Client\AlibabaCloud;

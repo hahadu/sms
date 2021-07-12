@@ -3,7 +3,7 @@
 
 namespace Hahadu\Sms\Client;
 use AlibabaCloud\Client\Exception\ClientException;
-use Hahadu\Sms\Service\Aliyun;
+use Hahadu\Sms\Service\AliyunSms;
 
 class SmsClient implements SmsServiceInterface
 {
@@ -26,7 +26,7 @@ class SmsClient implements SmsServiceInterface
         $service = strtolower($service);
         switch ($service){
             case $service == 'aliyun':
-                $this->service = new Aliyun($accessSecret, $accessKey, $signName);
+                $this->service = new AliyunSms($accessSecret, $accessKey, $signName);
                 break;
             default:
                 $this->service = null;

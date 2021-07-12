@@ -6,12 +6,12 @@ namespace Hahadu\Sms\Service;
 use AlibabaCloud\Client\Exception\ClientException;
 use Hahadu\Helper\JsonHelper;
 use Hahadu\Sms\Client\SmsServiceInterface;
-use Hahadu\Sms\Service\Aliyun\AliyunSmsRequest;
-use Hahadu\Sms\Service\Aliyun\AliyunSmsSign;
-use Hahadu\Sms\Service\Aliyun\AliyunSmsTemplate;
+use Hahadu\Sms\Service\AliyunSms\AliyunSmsRequest;
+use Hahadu\Sms\Service\AliyunSms\AliyunSmsSign;
+use Hahadu\Sms\Service\AliyunSms\AliyunSmsTemplate;
 
 
-class Aliyun implements SmsServiceInterface
+class AliyunSms implements SmsServiceInterface
 {
     use AliyunSmsSign;
     use AliyunSmsRequest;
