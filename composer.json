@@ -3,11 +3,13 @@
     "description": "php sms",
     "type": "library",
     "require": {
-        "php": ">=5.6",
-        "alibabacloud/client": "^1.5"
+        "php": ">=7.4",
+        "guzzlehttp/guzzle": "^7.5",
+        "alibabacloud/client": "^1.5",
+        "qiniu/php-sdk": "^7.12"
     },
     "require-dev": {
-        "php": ">=5.6"
+        "php": ">=7.4"
     },
     "license": "Apache-2.0",
     "authors": [
@@ -18,9 +20,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "Hahadu\\Sms\\": "src/",
-            "Hahadu\\ThinkSms\\": "src/think/"
+            "Hahadu\\Sms\\": "src/"
         }
     },
-        "minimum-stability": "dev"
+    "minimum-stability": "dev"
 }

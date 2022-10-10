@@ -55,6 +55,7 @@ class AliyunSms implements SmsServiceInterface
     public function set_template($template = NULL)
     {
         $this->sms_template = $template;
+        return $this;
     }
 
     /*****
@@ -99,5 +100,7 @@ class AliyunSms implements SmsServiceInterface
         ];
         return $this->request('QuerySendDetails', $options);
     }
+
+
 
 }

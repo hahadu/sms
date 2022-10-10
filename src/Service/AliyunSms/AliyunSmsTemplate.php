@@ -4,12 +4,15 @@
 namespace Hahadu\Sms\Service\AliyunSms;
 
 
+use AlibabaCloud\Client\Exception\ClientException;
+
 trait AliyunSmsTemplate
 {
-    /*****
+    /**
      * 查询短信模板
      * @param string $template 短信模板code
      * @return array|string
+     * @throws ClientException
      */
     public function query_sms_template(string $template)
     {
@@ -19,7 +22,7 @@ trait AliyunSmsTemplate
         return $this->request('QuerySmsTemplate', $options);
     }
 
-    /*****
+    /**
      * 修改申请失败的短信模板
      * @param int $type 短信类型。其中：<br/>
      * 0：验证码。<br/>
@@ -32,6 +35,7 @@ trait AliyunSmsTemplate
      * @param null $template_code 短信模板id
      * @param null $sign
      * @return array|string
+     * @throws ClientException
      */
     public function edit_sms_template($type, $template_name, $template_content, $remark, $template_code = null, $sign = null)
     {
@@ -45,7 +49,7 @@ trait AliyunSmsTemplate
         return $this->request('ModifySmsTemplate', $options);
     }
 
-    /*****
+    /**
      * 创建短信模板
      * @param int $type 短信类型。其中：<br/>
      * 0：验证码。<br/>
@@ -57,9 +61,14 @@ trait AliyunSmsTemplate
      * @param string $remark 短信模板申请说明
      * @param null $sign
      * @return array|string
+     * @throws ClientException
      */
     public function create_sms_template($type, $template_name, $template_content, $remark, $sign = null)
     {
+        if(!is_numeric($type)){
+            throw new \Exception('模板类型不正确');
+        }
+
         $options = [
             'TemplateType' => $type, //短信类型。其中：0：验证码。1：短信通知。2：推广短信。3：国际/港澳台消息
             'TemplateName' => $template_name,//'订单创建',
@@ -69,10 +78,11 @@ trait AliyunSmsTemplate
         return $this->request('AddSmsTemplate', $options);
     }
 
-    /*****
+    /**
      * 删除短信模板
      * @param string $template_code
      * @return array|string
+     * @throws ClientException
      */
     public function delete_sms_template(string $template_code)
     {
