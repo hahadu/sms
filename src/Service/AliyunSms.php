@@ -4,7 +4,6 @@
 namespace Hahadu\Sms\Service;
 
 use AlibabaCloud\Client\Exception\ClientException;
-use Hahadu\Helper\JsonHelper;
 use Hahadu\Sms\Client\SmsServiceInterface;
 use Hahadu\Sms\Service\AliyunSms\AliyunSmsRequest;
 use Hahadu\Sms\Service\AliyunSms\AliyunSmsSign;
@@ -73,7 +72,7 @@ class AliyunSms implements SmsServiceInterface
             'PhoneNumbers' => $phone,
             'SignName' => $this->sign_name,
             'TemplateCode' => $this->sms_template,
-            'TemplateParam' => JsonHelper::json_encode($smsParam),
+            'TemplateParam' => json_encode($smsParam,JSON_UNESCAPED_UNICODE),
         ];
         return $this->request('SendSms', $options);
     }

@@ -6,7 +6,8 @@
         "php": ">=7.4",
         "guzzlehttp/guzzle": "^7.5",
         "alibabacloud/client": "^1.5",
-        "qiniu/php-sdk": "^7.12"
+        "qiniu/php-sdk": "^7.12",
+        "ext-json": "*"
     },
     "require-dev": {
         "php": ">=7.4"
