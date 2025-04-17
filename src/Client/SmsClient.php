@@ -10,31 +10,50 @@ class SmsClient implements SmsServiceInterface
 
     /**
      * 短信服务商
-     * @var string
+     * @var SmsServiceInterface
      */
     protected $service;
+
+    private $service_list = ['aliyun','qiniu'];
+    private string $access_key;
+    private string $access_secret;
+    private string $sign_name;
 
     /**
      * 构造函数
      * @param string $accessSecret Secret key
      * @param string $accessKey Secret key id
-     * @param string $signName  短信签名
+     * @param string $signName 短信签名
      * @param string $service 短信服务商
+     * @throws \Exception
      */
     public function __construct(string $accessSecret, string $accessKey, string $signName, string $service="Aliyun")
     {
+        $this->access_key = $accessKey;
+        $this->access_secret = $accessSecret;
+        $this->sign_name = $signName;
+
+        $this->service($service);
+    }
+
+    public function service(string $service="Aliyun")
+    {
         $service = strtolower($service);
+        if(!in_array($service,$this->service_list)){
+            throw new \Exception("暂不支持的短信服务商");
+        }
         switch ($service){
             case 'aliyun':
-                $this->service = new AliyunSms($accessSecret, $accessKey, $signName);
+                $this->service = new AliyunSms($this->access_secret, $this->access_key, $this->sign_name);
                 break;
             case 'qiniu':
-                $this->service = new QiniuSms($accessSecret, $accessKey, $signName);
+                $this->service = new QiniuSms($this->access_secret, $this->access_key, $this->sign_name);
                 break;
             default:
                 $this->service = null;
                 break;
         }
+
     }
 
     /**

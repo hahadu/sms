@@ -17,8 +17,13 @@ class QiniuSms implements SmsServiceInterface
         $this->accessKey = $accessKey;
         $this->accessSecret = $accessSecret;
         $this->signName = $signName;
+        $this->sms_client();
+    }
 
+    public function sms_client(): QiniuSms
+    {
         $this->smsClient = new Sms(new Auth($this->accessKey, $this->accessSecret));
+        return $this;
     }
 
     /**
