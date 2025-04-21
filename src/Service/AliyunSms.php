@@ -8,6 +8,7 @@ use Hahadu\Sms\Client\SmsServiceInterface;
 use Hahadu\Sms\Service\AliyunSms\AliyunSmsRequest;
 use Hahadu\Sms\Service\AliyunSms\AliyunSmsSign;
 use Hahadu\Sms\Service\AliyunSms\AliyunSmsTemplate;
+use Hahadu\Sms\Service\Traits\ResponseTrait;
 
 
 class AliyunSms implements SmsServiceInterface
@@ -15,6 +16,7 @@ class AliyunSms implements SmsServiceInterface
     use AliyunSmsSign;
     use AliyunSmsRequest;
     use AliyunSmsTemplate;
+    use ResponseTrait;
     /*****
      * @var $access_key string
      */
@@ -74,7 +76,11 @@ class AliyunSms implements SmsServiceInterface
             'TemplateCode' => $this->sms_template,
             'TemplateParam' => json_encode($smsParam,JSON_UNESCAPED_UNICODE),
         ];
-        return $this->request('SendSms', $options);
+        $result = $this->request('SendSms', $options);
+        if($result['Code'] == 'OK'){
+            return $this->success($result['BizId'],$result['Message']);
+        }
+        return $this->error(0,$result['Message'],$result['Code']);
     }
 
     /*****
@@ -97,7 +103,11 @@ class AliyunSms implements SmsServiceInterface
             'PhoneNumber' => $phone_number,
             'SendDate' => $send_date
         ];
-        return $this->request('QuerySendDetails', $options);
+        $result = $this->request('QuerySendDetails', $options);
+        if($result['Code'] == 'OK'){
+            return $this->success(['list'=>$result['SmsSendDetailDTOs']],$result['Message']);
+        }
+        return $this->error(0,$result['Message'],$result['Code']);
     }
 
 

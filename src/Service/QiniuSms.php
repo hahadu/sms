@@ -2,14 +2,17 @@
 
 namespace Hahadu\Sms\Service;
 
+use Hahadu\Sms\Service\Traits\ResponseTrait;
 use Qiniu\Auth;
 use Qiniu\Sms\Sms;
 use Hahadu\Sms\Client\SmsServiceInterface;
 class QiniuSms implements SmsServiceInterface
 {
+    use ResponseTrait;
     protected $accessKey;
     protected $accessSecret;
     protected $signName;
+    /** @var Sms */
     protected $smsClient;
 
     public function __construct(string $accessSecret, string $accessKey, string $signName)
@@ -45,10 +48,10 @@ class QiniuSms implements SmsServiceInterface
      */
     public function send_sms($phone, $smsParam, $template = NULL)
     {
-        if(!is_array($phone)){
-            $phone = [$phone];
-        }
-        return $this->smsClient->sendMessage($template, $phone, $smsParam);
+
+        $phone = !is_array($phone) ? [$phone] : $phone;
+        [$ret, $err] = $this->smsClient->sendMessage($template, $phone, $smsParam);
+        return $this->response($ret, $err);
     }
 
     /**
@@ -81,7 +84,7 @@ class QiniuSms implements SmsServiceInterface
     public function query_sms_sign(string $audit_status=null,$page = 1, $page_size = 20)
     {
         [$ret, $err] = $this->smsClient->querySignature($audit_status,$page,$page_size );
-        return $this->response($ret, $err);
+        return $this->success($this->response($ret, $err)['job_id']);
     }
 
     /**

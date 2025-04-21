@@ -18,7 +18,22 @@ trait AliyunSmsSign
         $options = [
             'SignName' => $sign,
         ];
-        return $this->request('QuerySmsSign', $options);
+        $result = $this->request('QuerySmsSign', $options);
+        if($result['Code'] == 'OK'){
+            return $this->success([
+                'sign_name'=>$result['SignName'],
+                'sign_code'=>$result['sign_code'],
+                'sign_status'=>$result['SignStatus'],
+                'create_date'=>$result['CreateDate'],
+                'pics'=>$result['FileUrlList'],
+                'remark'=>$result['Remark'],
+                'source'=>$result['SignUsage'],
+                'audit_info'=>$result['AuditInfo']
+                ]);
+        }
+
+
+        return $this->error(0,$result["Message"],$result['Code']);
     }
 
     /*****
